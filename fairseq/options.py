@@ -18,14 +18,14 @@ from fairseq.tasks import TASK_REGISTRY
 from fairseq.utils import import_user_module
 
 
-def get_preprocessing_parser(default_task='translation'):
-    parser = get_parser('Preprocessing', default_task)
+def get_preprocessing_parser(default_task='translation', input_args=None):
+    parser = get_parser('Preprocessing', default_task, input_args)
     add_preprocess_args(parser)
     return parser
 
 
-def get_training_parser(default_task='translation'):
-    parser = get_parser('Trainer', default_task)
+def get_training_parser(default_task='translation', input_args=None):
+    parser = get_parser('Trainer', default_task, input_args)
     add_dataset_args(parser, train=True)
     add_distributed_training_args(parser)
     add_model_args(parser)
@@ -124,12 +124,12 @@ def parse_args_and_arch(parser, input_args=None, parse_known=False):
         return args
 
 
-def get_parser(desc, default_task='translation'):
+def get_parser(desc, default_task='translation', input_args=None):
     # Before creating the true parser, we need to import optional user module
     # in order to eagerly import custom tasks, optimizers, architectures, etc.
     usr_parser = argparse.ArgumentParser(add_help=False)
     usr_parser.add_argument('--user-dir', default=None)
-    usr_args, _ = usr_parser.parse_known_args()
+    usr_args, _ = usr_parser.parse_known_args(input_args)
     import_user_module(usr_args)
 
     parser = argparse.ArgumentParser()
